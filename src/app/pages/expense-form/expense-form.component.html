@@ -1,0 +1,71 @@
+<div class="row">
+  <div class="col-lg-6">
+    <h4>Expense Form</h4>
+
+    <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+
+        <input
+          type="text"
+          class="form-control"
+          id="price"
+          placeholder="Price"
+          formControlName="price"
+        />
+        <div
+          *ngIf="
+            expenseForm.get('price')?.hasError('required') &&
+            expenseForm.get('price')?.touched
+          "
+          class="text-danger form-text"
+        >
+          price is required
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          placeholder="Title"
+          formControlName="title"
+        />
+        <div
+          *ngIf="
+            expenseForm.get('title')?.hasError('required') &&
+            expenseForm.get('title')?.touched
+          "
+          class="text-danger form-text"
+        >
+          Title is required
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+
+        <textarea
+          formControlName="description"
+          class="form-control"
+          id="description"
+          rows="3"
+        ></textarea>
+        <div
+          *ngIf="
+            expenseForm.get('description')?.hasError('required') &&
+            expenseForm.get('description')?.touched
+          "
+          class="text-danger form-text"
+        >
+          description is required
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success">Save changes</button>
+    </form>
+  </div>
+</div>
