@@ -1,5 +1,6 @@
+import { ExpenseService } from './../../core/services/expense.service';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,6 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { IExpense } from '../../core/models/common.model';
 
 @Component({
   selector: 'app-expense-form',
@@ -15,9 +17,9 @@ import {
   templateUrl: './expense-form.component.html',
   styleUrl: './expense-form.component.scss',
 })
-export class ExpenseFormComponent {
+export class ExpenseFormComponent implements OnInit {
   expenseForm!: FormGroup;
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private expenseService: ExpenseService) {
     this.expenseForm = this.fb.group({
       price: new FormControl('', [Validators.required]),
       title: new FormControl('', [Validators.required]),
@@ -25,11 +27,30 @@ export class ExpenseFormComponent {
     });
   }
 
+  ngOnInit(): void {}
+
+  getAllExpenses() {
+    this.expenseService
+      .getAllExpenses()
+      .snapshotChanges()
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+        },
+      });
+  }
+
   onSubmit() {
-    console.log("submit triggered");
+    console.log('submit triggered');
     if (this.expenseForm.valid) {
       console.log(this.expenseForm.value);
-    }else{
+      const expense: IExpense = {
+        price: this.expenseForm.value.price,
+        title: this.expenseForm.value.title,
+        description: this.expenseForm.value.description,
+      };
+      this.expenseService.addExpense(expense);
+    } else {
       this.expenseForm.markAllAsTouched();
     }
   }
