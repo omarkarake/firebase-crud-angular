@@ -9,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { IExpense } from '../../core/models/common.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-expense-form',
@@ -19,7 +20,11 @@ import { IExpense } from '../../core/models/common.model';
 })
 export class ExpenseFormComponent implements OnInit {
   expenseForm!: FormGroup;
-  constructor(private fb: FormBuilder, private expenseService: ExpenseService) {
+  constructor(
+    private fb: FormBuilder,
+    private expenseService: ExpenseService,
+    private router: Router
+  ) {
     this.expenseForm = this.fb.group({
       price: new FormControl('', [Validators.required]),
       title: new FormControl('', [Validators.required]),
@@ -50,6 +55,7 @@ export class ExpenseFormComponent implements OnInit {
         description: this.expenseForm.value.description,
       };
       this.expenseService.addExpense(expense);
+      this.router.navigate(['/']);
     } else {
       this.expenseForm.markAllAsTouched();
     }
