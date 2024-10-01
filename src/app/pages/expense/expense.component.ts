@@ -13,6 +13,7 @@ import { IExpense } from '../../core/models/common.model';
 })
 export class ExpenseComponent implements OnInit {
   expenses: IExpense[] = [];
+  totalExpense = 0;
   constructor(private expenseService: ExpenseService) {}
 
   ngOnInit(): void {
@@ -25,7 +26,17 @@ export class ExpenseComponent implements OnInit {
       .snapshotChanges()
       .subscribe({
         next: (data) => {
-          console.log(data);
+          this.expenses = [];
+          data.forEach((item) => {
+            let expense = item.payload.toJSON() as IExpense;
+            this.totalExpense += parseInt(expense.price);
+            this.expenses.push({
+              key: item.key || '',
+              title: expense.title,
+              description: expense.description,
+              price: expense.price,
+            });
+          });
         },
       });
   }
