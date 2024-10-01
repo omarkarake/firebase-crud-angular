@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { IExpense } from '../../core/models/common.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-expense-form',
@@ -20,10 +20,13 @@ import { Router } from '@angular/router';
 })
 export class ExpenseFormComponent implements OnInit {
   expenseForm!: FormGroup;
+  expenseId: string = '';
+
   constructor(
     private fb: FormBuilder,
     private expenseService: ExpenseService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     this.expenseForm = this.fb.group({
       price: new FormControl('', [Validators.required]),
@@ -32,7 +35,18 @@ export class ExpenseFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe({
+      next: (params) => {
+        this.expenseId = params['id'];
+        if (this.expenseId) {
+          this.getExpense(this.expenseId);
+        }
+      },
+    });
+
+    console.log(this.expenseId);
+  }
 
   getAllExpenses() {
     this.expenseService
@@ -54,10 +68,32 @@ export class ExpenseFormComponent implements OnInit {
         title: this.expenseForm.value.title,
         description: this.expenseForm.value.description,
       };
-      this.expenseService.addExpense(expense);
+      if (this.expenseId === undefined) {
+        console.log('add');
+        this.expenseService.addExpense(expense);
+      } else {
+        console.log('update');
+        this.expenseService.updateExpense(this.expenseId, expense);
+      }
       this.router.navigate(['/']);
     } else {
       this.expenseForm.markAllAsTouched();
     }
+  }
+
+  getExpense(key: string) {
+    this.expenseService
+      .getExpenseById(key)
+      .snapshotChanges()
+      .subscribe({
+        next: (data) => {
+          let expense = data.payload.toJSON() as IExpense;
+          this.expenseForm.patchValue({
+            price: expense.price,
+            title: expense.title,
+            description: expense.description,
+          });
+        },
+      });
   }
 }

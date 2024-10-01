@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ExpenseService } from '../../core/services/expense.service';
 import { IExpense } from '../../core/models/common.model';
 
@@ -14,7 +14,7 @@ import { IExpense } from '../../core/models/common.model';
 export class ExpenseComponent implements OnInit {
   expenses: IExpense[] = [];
   totalExpense = 0;
-  constructor(private expenseService: ExpenseService) {}
+  constructor(private expenseService: ExpenseService, private router: Router) {}
 
   ngOnInit(): void {
     this.getAllExpenses();
@@ -39,5 +39,16 @@ export class ExpenseComponent implements OnInit {
           });
         },
       });
+  }
+
+  editExpense(key: string) {
+    this.router.navigate(['/expense-form/' + key]);
+  }
+
+  removeExpense(key: string) {
+    this.expenseService.deleteExpense(key)
+    // .then(() => {
+    //   this.getAllExpenses();
+    // });
   }
 }

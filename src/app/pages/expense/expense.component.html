@@ -17,8 +17,20 @@
         {{ expense.description }}
       </p>
       <div class="d-flex gap-2">
-        <button type="button" class="btn btn-primary">Edit</button>
-        <button type="button" class="btn btn-danger">Delete</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="editExpense(expense.key!)"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="removeExpense(expense.key!)"
+        >
+          Delete
+        </button>
       </div>
     </div>
   </div>
